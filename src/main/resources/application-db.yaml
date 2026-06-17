@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bootbank_loan_db?currentSchema=bootbank_loan_db
+    username: ${DB_USERNAME:bootbank_loan}
+    password: ${DB_PASSWORD:dev12345}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: bootbank_loan_db
+
+
+  liquibase:
+    enabled: false #this will change to true for using liqubase

@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: bootbank-ms-template #will change to project name example bootbank-card-ms, bootbank-loan-ms
+  profiles:
+    include:
+      - db
+server:
+  servlet:
+    context-path: /bootbank-ms-template #will change to project name example bootbank-card-ms, bootbank-loan-ms
+
+
