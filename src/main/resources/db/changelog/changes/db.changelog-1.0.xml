@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Changeset 1: Create card_products table -->
+    <changeSet id="1" author="student">
+        <createTable tableName="card_products">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="card_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Changeset 2: Insert initial card products -->
+    <changeSet id="2" author="student">
+        <!-- Debet cards -->
+        <insert tableName="card_products">
+            <column name="code" value="DIGICARD"/>
+            <column name="name" value="Bootbank DigiCard"/>
+            <column name="card_type" value="DEBIT"/>
+        </insert>
+        <insert tableName="card_products">
+            <column name="code" value="CLASSIC_DEBIT"/>
+            <column name="name" value="Bootbank Classic Debet"/>
+            <column name="card_type" value="DEBIT"/>
+        </insert>
+        <insert tableName="card_products">
+            <column name="code" value="PLATINUM_DEBIT"/>
+            <column name="name" value="Bootbank Platinum Debet"/>
+            <column name="card_type" value="DEBIT"/>
+        </insert>
+        <insert tableName="card_products">
+            <column name="code" value="VISA_INFINITE"/>
+            <column name="name" value="Bootbank Visa Infinite"/>
+            <column name="card_type" value="DEBIT"/>
+        </insert>
+        <insert tableName="card_products">
+            <column name="code" value="WORLD_ELITE"/>
+            <column name="name" value="Bootbank World Elite"/>
+            <column name="card_type" value="DEBIT"/>
+        </insert>
+        <!-- Credit cards -->
+        <insert tableName="card_products">
+            <column name="code" value="CLASSIC_CREDIT"/>
+            <column name="name" value="Bootbank Classic"/>
+            <column name="card_type" value="CREDIT"/>
+        </insert>
+        <insert tableName="card_products">
+            <column name="code" value="GOLD_CREDIT"/>
+            <column name="name" value="Bootbank Gold"/>
+            <column name="card_type" value="CREDIT"/>
+        </insert>
+        <insert tableName="card_products">
+            <column name="code" value="PREMIUM_CREDIT"/>
+            <column name="name" value="Bootbank Premium"/>
+            <column name="card_type" value="CREDIT"/>
+        </insert>
+        <insert tableName="card_products">
+            <column name="code" value="PLATINUM_CREDIT"/>
+            <column name="name" value="Bootbank Platinum"/>
+            <column name="card_type" value="CREDIT"/>
+        </insert>
+    </changeSet>
+
+    <!-- Changeset 3: Create user_cards table -->
+    <changeSet id="3" author="student">
+        <createTable tableName="user_cards">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="client_cif" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_last_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="card_product_code" type="VARCHAR(50)">
+                <constraints nullable="false" foreignKeyName="fk_user_cards_product" referencedTableName="card_products" referencedColumnNames="code"/>
+            </column>
+            <column name="card_number" type="VARCHAR(30)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="expiry_date" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="card_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="salary" type="NUMERIC(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="balance" type="NUMERIC(15, 2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="credit_limit" type="NUMERIC(15, 2)"/>
+            <column name="used_limit" type="NUMERIC(15, 2)"/>
+            <column name="created_date" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="TIMESTAMP"/>
+        </createTable>
+
+        <!-- Credit card currency validation (only AZN allowed for CREDIT cards) -->
+        <sql dbms="postgresql,h2">
+            ALTER TABLE user_cards ADD CONSTRAINT chk_credit_card_currency CHECK (card_type &lt;&gt; 'CREDIT' OR currency = 'AZN');
+        </sql>
+    </changeSet>
+
+    <changeSet id="4" author="student" dbms="postgresql">
+        <sql>
+            CREATE UNIQUE INDEX uq_user_cards_active_credit ON user_cards (client_cif) WHERE (card_type = 'CREDIT');
+        </sql>
+    </changeSet>
+
+    <!-- Changeset 5: Create card_transactions table -->
+    <changeSet id="5" author="student">
+        <createTable tableName="card_transactions">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="card_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_card_transactions_card" referencedTableName="user_cards" referencedColumnNames="id"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="NUMERIC(15, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Changeset 6: Insert mock data for testing (Huseyn Huseynov's client_cif = "123456") -->
+    <changeSet id="6" author="student">
+        <insert tableName="user_cards">
+            <column name="client_cif" value="123456"/>
+            <column name="client_name" value="Huseyn"/>
+            <column name="client_last_name" value="Huseynov"/>
+            <column name="card_product_code" value="DIGICARD"/>
+            <column name="card_number" value="5190 **** **** 4532"/>
+            <column name="expiry_date" value="06/29"/>
+            <column name="card_type" value="DEBIT"/>
+            <column name="currency" value="AZN"/>
+            <column name="salary" value="1500.00"/>
+            <column name="balance" value="120.40"/>
+        </insert>
+        <insert tableName="user_cards">
+            <column name="client_cif" value="123456"/>
+            <column name="client_name" value="Huseyn"/>
+            <column name="client_last_name" value="Huseynov"/>
+            <column name="card_product_code" value="GOLD_CREDIT"/>
+            <column name="card_number" value="5522 **** **** 8743"/>
+            <column name="expiry_date" value="06/29"/>
+            <column name="card_type" value="CREDIT"/>
+            <column name="currency" value="AZN"/>
+            <column name="salary" value="2000.00"/>
+            <column name="balance" value="0.00"/>
+            <column name="credit_limit" value="900.00"/>
+            <column name="used_limit" value="0.00"/>
+        </insert>
+        <!-- Mock transactions from Page 9 and Page 10 -->
+        <insert tableName="card_transactions">
+            <column name="id" value="15402"/>
+            <column name="card_id" value="1"/>
+            <column name="title" value="Bravo Supermarket"/>
+            <column name="category" value="Supermarket"/>
+            <column name="amount" value="45.20"/>
+            <column name="status" value="SUCCESS"/>
+            <column name="created_at" value="2026-06-24 14:20:35"/>
+        </insert>
+        <insert tableName="card_transactions">
+            <column name="id" value="15391"/>
+            <column name="card_id" value="2"/>
+            <column name="title" value="Wolt - Papa Johns"/>
+            <column name="category" value="Restoran"/>
+            <column name="amount" value="28.00"/>
+            <column name="status" value="SUCCESS"/>
+            <column name="created_at" value="2026-06-23 21:10:02"/>
+        </insert>
+        <insert tableName="card_transactions">
+            <column name="id" value="15201"/>
+            <column name="card_id" value="1"/>
+            <column name="title" value="Baku Metro"/>
+            <column name="category" value="Nəqliyyat"/>
+            <column name="amount" value="0.40"/>
+            <column name="status" value="FAILED"/>
+            <column name="created_at" value="2026-06-22 08:45:12"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
