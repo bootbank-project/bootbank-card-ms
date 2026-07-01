@@ -41,3 +41,15 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+
+dependencies {
+    // Mövcud olan digər dependensilərin (Lombok, Spring Web və s.) burada qalacaq...
+
+    // Real verilənlər bazası (PostgreSQL) üçün lazımi kitabxanalar
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Miqrasiya aləti (Liquibase) üçün
+    implementation 'org.liquibase:liquibase-core'
+}
