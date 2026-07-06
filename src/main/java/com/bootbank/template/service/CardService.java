@@ -5,5 +5,5 @@ import com.bootbank.template.dto.response.CardOrderResponse;
 
 public interface CardService {
 
-    CardOrderResponse orderCard(CardOrderRequest request);
+    CardOrderResponse orderCard(String clientCif, String clientName, String clientLastname, CardOrderRequest request);
 }

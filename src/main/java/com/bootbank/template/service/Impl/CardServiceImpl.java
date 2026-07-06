@@ -37,7 +37,8 @@ public class CardServiceImpl implements CardService {
 
     @Override
     @Transactional
-    public CardOrderResponse orderCard(CardOrderRequest request) {
+    public CardOrderResponse orderCard(String clientCif, String clientName, String clientLastname,
+                                       CardOrderRequest request) {
         Card cardProduct = cardRepository.findByCode(request.cardProductCode())
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.CARD_PRODUCT_NOT_FOUND,
@@ -52,7 +53,7 @@ public class CardServiceImpl implements CardService {
         BigDecimal usedLimit = null;
 
         if (isCredit) {
-            validateCreditCardRules(request);
+            validateCreditCardRules(clientCif, request);
             creditLimit = request.salary()
                     .multiply(CREDIT_LIMIT_RATIO)
                     .setScale(2, RoundingMode.HALF_DOWN);
@@ -66,9 +67,9 @@ public class CardServiceImpl implements CardService {
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
         User user = User.builder()
-                .clientCif(request.clientCif())
-                .clientName(request.clientName())
-                .clientLastname(request.clientLastname())
+                .clientCif(clientCif)
+                .clientName(clientName)
+                .clientLastname(clientLastname)
                 .cardProductCode(cardProduct)
                 .cardNumber(rawCardNumber)
                 .expiryDate(expiryDate)
@@ -96,7 +97,7 @@ public class CardServiceImpl implements CardService {
         );
     }
 
-    private void validateCreditCardRules(CardOrderRequest request) {
+    private void validateCreditCardRules(String clientCif, CardOrderRequest request) {
         if (request.currency() != Currency.AZN) {
             throw new BusinessException(
                     ErrorCode.CREDIT_CARD_CURRENCY_MUST_BE_AZN,
@@ -115,7 +116,7 @@ public class CardServiceImpl implements CardService {
                 .filter(ct -> ct.getCategory() == CardType.CardCategory.CREDIT)
                 .collect(Collectors.toList());
 
-        if (userRepository.existsByClientCifAndCardTypeIn(request.clientCif(), creditCardTypes)) {
+        if (userRepository.existsByClientCifAndCardTypeIn(clientCif, creditCardTypes)) {
             throw new BusinessException(
                     ErrorCode.ACTIVE_CREDIT_CARD_EXISTS,
                     "Bu CIF ilə artıq aktiv kredit kartı mövcuddur."

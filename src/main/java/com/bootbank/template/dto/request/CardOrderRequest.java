@@ -7,16 +7,6 @@ import java.math.BigDecimal;
 
 public record CardOrderRequest(
 
-        @NotBlank(message = "Client CIF is required")
-        @Size(max = 6, message = "Client CIF must be at most 6 characters")
-        String clientCif,
-
-        @NotBlank(message = "Client name is required")
-        String clientName,
-
-        @NotBlank(message = "Client lastname is required")
-        String clientLastname,
-
         @NotBlank(message = "Card product code is required")
         String cardProductCode,
 
