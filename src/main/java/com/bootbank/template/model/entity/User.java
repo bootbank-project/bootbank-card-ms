@@ -24,6 +24,7 @@ public class User {
     Long id;
 
     @NotBlank(message = "Client CIF is required")
+    @Size(min = 6, max = 6, message = "Client CIF must be exactly 6 characters")
     @Column(name = "client_cif", nullable = false, length = 6)
     String clientCif;
 

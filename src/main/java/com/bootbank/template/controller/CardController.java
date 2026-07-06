@@ -24,7 +24,7 @@ public class CardController {
     public CardOrderResponse orderCard(
             @RequestHeader("X-Client-Cif")
             @NotBlank(message = "X-Client-Cif header is required")
-            @Size(max = 6, message = "X-Client-Cif must be at most 6 characters")
+            @Size(min = 6, max = 6, message = "X-Client-Cif must be exactly 6 characters")
             String clientCif,
 
             @RequestHeader("X-Client-Name")
