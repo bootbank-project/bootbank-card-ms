@@ -6,6 +6,7 @@ import com.bootbank.template.exception.BusinessException;
 import com.bootbank.template.exception.enums.ErrorCode;
 import com.bootbank.template.model.entity.Card;
 import com.bootbank.template.model.entity.User;
+import com.bootbank.template.model.enums.CardProductCode;
 import com.bootbank.template.model.enums.CardType;
 import com.bootbank.template.model.enums.Currency;
 import com.bootbank.template.repository.CardRepository;
@@ -20,10 +21,6 @@ import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
@@ -39,14 +36,22 @@ public class CardServiceImpl implements CardService {
     @Transactional
     public CardOrderResponse orderCard(String clientCif, String clientName, String clientLastname,
                                        CardOrderRequest request) {
-        Card cardProduct = cardRepository.findByCode(request.cardProductCode())
+        CardProductCode productCode = request.cardProductCode();
+        Card cardProduct = cardRepository.findByCode(productCode.name())
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.CARD_PRODUCT_NOT_FOUND,
-                        "Kart məhsulu tapılmadı: " + request.cardProductCode()
+                        "Kart məhsulu tapılmadı: " + productCode.name()
                 ));
 
         CardType cardType = cardProduct.getType();
-        boolean isCredit = cardType.getCategory() == CardType.CardCategory.CREDIT;
+        if (cardType != productCode.getCardType()) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_CARD_TYPE,
+                    "Kart məhsulu tipi uyğun deyil: " + productCode.name()
+            );
+        }
+
+        boolean isCredit = cardType == CardType.CREDIT;
 
         BigDecimal balance = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_DOWN);
         BigDecimal creditLimit = null;
@@ -86,7 +91,7 @@ public class CardServiceImpl implements CardService {
         userRepository.save(user);
 
         return new CardOrderResponse(
-                cardProduct.getCode(),
+                productCode.name(),
                 maskedCardNumber,
                 expiryDate,
                 cardType.name(),
@@ -112,11 +117,7 @@ public class CardServiceImpl implements CardService {
             );
         }
 
-        List<CardType> creditCardTypes = Arrays.stream(CardType.values())
-                .filter(ct -> ct.getCategory() == CardType.CardCategory.CREDIT)
-                .collect(Collectors.toList());
-
-        if (userRepository.existsByClientCifAndCardTypeIn(clientCif, creditCardTypes)) {
+        if (userRepository.existsByClientCifAndCardType(clientCif, CardType.CREDIT)) {
             throw new BusinessException(
                     ErrorCode.ACTIVE_CREDIT_CARD_EXISTS,
                     "Bu CIF ilə artıq aktiv kredit kartı mövcuddur."

@@ -13,14 +13,11 @@ public enum ErrorCode {
     ACTIVE_CREDIT_CARD_EXISTS("Bad Request", HttpStatus.BAD_REQUEST),
     CREDIT_CARD_CURRENCY_MUST_BE_AZN("Bad Request", HttpStatus.BAD_REQUEST),
 
-
     CARD_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
     CARD_PRODUCT_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
 
-
     RESOURCE_ALREADY_EXISTS("Conflict", HttpStatus.CONFLICT),
-
 
     INTERNAL_ERROR("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 

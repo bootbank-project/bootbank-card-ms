@@ -6,6 +6,6 @@ spring:
       - db
 server:
   servlet:
-    context-path: /bootbank-ms-template #will change to project name example bootbank-card-ms, bootbank-loan-ms
+    context-path: /bootbank-card-ms #will change to project name example bootbank-card-ms, bootbank-loan-ms
 
 

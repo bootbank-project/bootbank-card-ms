@@ -1,5 +1,6 @@
 package com.bootbank.template.dto.request;
 
+import com.bootbank.template.model.enums.CardProductCode;
 import com.bootbank.template.model.enums.Currency;
 import jakarta.validation.constraints.*;
 
@@ -7,8 +8,8 @@ import java.math.BigDecimal;
 
 public record CardOrderRequest(
 
-        @NotBlank(message = "Card product code is required")
-        String cardProductCode,
+        @NotNull(message = "Card product code is required")
+        CardProductCode cardProductCode,
 
         @NotNull(message = "Currency is required")
         Currency currency,

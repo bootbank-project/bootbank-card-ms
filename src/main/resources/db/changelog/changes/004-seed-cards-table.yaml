@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-seed-cards-table
+      author: bootbank
+      comment: "Card products with product codes and DEBIT/CREDIT types"
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM cards
+      changes:
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: DIGICARD }
+              - column: { name: type, value: DEBIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: CLASSIC_DEBIT }
+              - column: { name: type, value: DEBIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: PLATINUM_DEBIT }
+              - column: { name: type, value: DEBIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: VISA_INFINITE }
+              - column: { name: type, value: DEBIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: WORLD_ELITE }
+              - column: { name: type, value: DEBIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: CLASSIC_CREDIT }
+              - column: { name: type, value: CREDIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: GOLD_CREDIT }
+              - column: { name: type, value: CREDIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: PREMIUM_CREDIT }
+              - column: { name: type, value: CREDIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueSequenceNext: cards_seq }
+              - column: { name: code, value: PLATINUM_CREDIT }
+              - column: { name: type, value: CREDIT }
+              - column: { name: created_at, valueComputed: NOW() }
+              - column: { name: updated_at, valueComputed: NOW() }
