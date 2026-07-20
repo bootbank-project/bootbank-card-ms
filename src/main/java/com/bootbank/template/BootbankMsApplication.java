@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-public class BootbankMsTemplateApplication {
+public class BootbankMsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BootbankMsTemplateApplication.class, args);
+		SpringApplication.run(BootbankMsApplication.class, args);
 	}
 
 }

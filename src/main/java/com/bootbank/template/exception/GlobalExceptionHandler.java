@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
+    @ExceptionHandler(RecordNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(RecordNotFoundException ex) {
         ErrorCode code = ex.getErrorCode();
         return ResponseEntity
                 .status(code.getHttpStatus())

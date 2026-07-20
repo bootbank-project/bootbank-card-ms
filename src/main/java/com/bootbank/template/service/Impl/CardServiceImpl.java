@@ -2,7 +2,7 @@ package com.bootbank.template.service.Impl;
 
 import com.bootbank.template.dto.request.CardOrderRequest;
 import com.bootbank.template.dto.response.CardOrderResponse;
-import com.bootbank.template.exception.BusinessException;
+import com.bootbank.template.exception.RecordNotFoundException;
 import com.bootbank.template.exception.enums.ErrorCode;
 import com.bootbank.template.model.entity.Card;
 import com.bootbank.template.model.entity.User;
@@ -38,14 +38,14 @@ public class CardServiceImpl implements CardService {
                                        CardOrderRequest request) {
         CardProductCode productCode = request.cardProductCode();
         Card cardProduct = cardRepository.findByCode(productCode.name())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new RecordNotFoundException(
                         ErrorCode.CARD_PRODUCT_NOT_FOUND,
                         "Kart məhsulu tapılmadı: " + productCode.name()
                 ));
 
         CardType cardType = cardProduct.getType();
         if (cardType != productCode.getCardType()) {
-            throw new BusinessException(
+            throw new RecordNotFoundException(
                     ErrorCode.INVALID_CARD_TYPE,
                     "Kart məhsulu tipi uyğun deyil: " + productCode.name()
             );
@@ -104,21 +104,21 @@ public class CardServiceImpl implements CardService {
 
     private void validateCreditCardRules(String clientCif, CardOrderRequest request) {
         if (request.currency() != Currency.AZN) {
-            throw new BusinessException(
+            throw new RecordNotFoundException(
                     ErrorCode.CREDIT_CARD_CURRENCY_MUST_BE_AZN,
                     "Kredit kartı yalnız AZN valyutasında sifariş edilə bilər."
             );
         }
 
         if (request.salary().compareTo(MIN_SALARY_FOR_CREDIT) < 0) {
-            throw new BusinessException(
+            throw new RecordNotFoundException(
                     ErrorCode.INSUFFICIENT_SALARY,
                     "Kredit kartı üçün minimum maaş 1000 AZN olmalıdır."
             );
         }
 
         if (userRepository.existsByClientCifAndCardType(clientCif, CardType.CREDIT)) {
-            throw new BusinessException(
+            throw new RecordNotFoundException(
                     ErrorCode.ACTIVE_CREDIT_CARD_EXISTS,
                     "Bu CIF ilə artıq aktiv kredit kartı mövcuddur."
             );

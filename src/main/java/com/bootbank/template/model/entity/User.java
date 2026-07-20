@@ -60,7 +60,7 @@ public class User {
     Currency currency;
 
     @NotNull(message = "Salary cannot be null")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Salary cannot be negative")
+    @DecimalMin(value = "0.0", message = "Salary cannot be negative")
     @Column(nullable = false, precision = 15, scale = 2)
     BigDecimal salary;
 
