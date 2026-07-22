@@ -15,7 +15,7 @@ public record CardOrderRequest(
         Currency currency,
 
         @NotNull(message = "Salary is required")
-        @DecimalMin(value = "0.0", inclusive = true, message = "Salary cannot be negative")
+        @DecimalMin(value = "0.0", message = "Salary cannot be negative")
         @Digits(integer = 15, fraction = 2, message = "Salary format is invalid (max 15 digits and 2 decimals allowed)")
         BigDecimal salary
 ) {
