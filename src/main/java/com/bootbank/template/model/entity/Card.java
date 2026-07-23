@@ -1,44 +1,82 @@
 package com.bootbank.template.model.entity;
 
 import com.bootbank.template.model.enums.CardType;
+import com.bootbank.template.model.enums.Currency;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "cards")
+@Table(name = "user_cards")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EntityListeners(AuditingEntityListener.class)
 public class Card {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank(message = "Card code cannot be null or blank")
-    @Column(nullable = false, unique = true)
-    String code;
+    @NotBlank(message = "Client CIF is required")
+    @Size(min = 6, max = 6, message = "Client CIF must be exactly 6 characters")
+    @Column(name = "client_cif", nullable = false, length = 6)
+    String clientCif;
+
+    @NotBlank(message = "Client name cannot be blank")
+    @Column(name = "client_name", nullable = false)
+    String clientName;
+
+    @NotBlank(message = "Client lastname cannot be blank")
+    @Column(name = "client_lastname", nullable = false)
+    String clientLastname;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "card_product_code", referencedColumnName = "code", nullable = false)
+    CardProduct cardProductCode;
+
+    @NotBlank(message = "Card number is required")
+    @Column(name = "card_number", unique = true, nullable = false)
+    String cardNumber;
+
+    @NotBlank(message = "Expiry date is required")
+    @Pattern(regexp = "^(0[1-9]|1[0-2])\\/([0-9]{2})$", message = "Expiry date must be in MM/YY format")
+    @Column(name = "expiry_date", nullable = false, length = 5)
+    String expiryDate;
 
     @NotNull(message = "Card type is required")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
-    CardType type;
+    @Column(name = "card_type", nullable = false, length = 30)
+    CardType cardType;
 
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    Instant createdAt;
+    @NotNull(message = "Currency is required")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 3)
+    Currency currency;
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    Instant updatedAt;
+    @NotNull(message = "Salary cannot be null")
+    @DecimalMin(value = "0.0", message = "Salary cannot be negative")
+    @Column(nullable = false, precision = 15, scale = 2)
+    BigDecimal salary;
+
+    @NotNull(message = "Balance cannot be null")
+    @Column(nullable = false, precision = 15, scale = 2)
+    BigDecimal balance;
+
+    @Column(name = "credit_limit", precision = 15, scale = 2)
+    BigDecimal creditLimit;
+
+    @Column(name = "used_limit", precision = 15, scale = 2)
+    BigDecimal usedLimit;
+
+    @Column(name = "created_date", updatable = false, nullable = false)
+    Timestamp createdDate;
+
+    @Column(name = "updated_date", nullable = false)
+    Timestamp updatedDate;
 }

@@ -5,12 +5,12 @@ import com.bootbank.template.dto.response.CardOrderResponse;
 import com.bootbank.template.exception.RecordNotFoundException;
 import com.bootbank.template.exception.enums.ErrorCode;
 import com.bootbank.template.model.entity.Card;
-import com.bootbank.template.model.entity.User;
+import com.bootbank.template.model.entity.CardProduct;
 import com.bootbank.template.model.enums.CardProductCode;
 import com.bootbank.template.model.enums.CardType;
 import com.bootbank.template.model.enums.Currency;
 import com.bootbank.template.repository.CardRepository;
-import com.bootbank.template.repository.UserRepository;
+import com.bootbank.template.repository.CardProductRepository;
 import com.bootbank.template.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,8 +28,8 @@ public class CardServiceImpl implements CardService {
     private static final BigDecimal MIN_SALARY_FOR_CREDIT = new BigDecimal("1000");
     private static final BigDecimal CREDIT_LIMIT_RATIO = new BigDecimal("0.45");
 
+    private final CardProductRepository cardProductRepository;
     private final CardRepository cardRepository;
-    private final UserRepository userRepository;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Override
@@ -37,7 +37,7 @@ public class CardServiceImpl implements CardService {
     public CardOrderResponse orderCard(String clientCif, String clientName, String clientLastname,
                                        CardOrderRequest request) {
         CardProductCode productCode = request.cardProductCode();
-        Card cardProduct = cardRepository.findByCode(productCode.name())
+        CardProduct cardProduct = cardProductRepository.findByCode(productCode.name())
                 .orElseThrow(() -> new RecordNotFoundException(
                         ErrorCode.CARD_PRODUCT_NOT_FOUND,
                         "Kart məhsulu tapılmadı: " + productCode.name()
@@ -71,7 +71,7 @@ public class CardServiceImpl implements CardService {
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        User user = User.builder()
+        Card issuedCard = Card.builder()
                 .clientCif(clientCif)
                 .clientName(clientName)
                 .clientLastname(clientLastname)
@@ -88,7 +88,7 @@ public class CardServiceImpl implements CardService {
                 .updatedDate(now)
                 .build();
 
-        userRepository.save(user);
+        cardRepository.save(issuedCard);
 
         return new CardOrderResponse(
                 productCode.name(),
@@ -117,7 +117,7 @@ public class CardServiceImpl implements CardService {
             );
         }
 
-        if (userRepository.existsByClientCifAndCardType(clientCif, CardType.CREDIT)) {
+        if (cardRepository.existsByClientCifAndCardType(clientCif, CardType.CREDIT)) {
             throw new RecordNotFoundException(
                     ErrorCode.ACTIVE_CREDIT_CARD_EXISTS,
                     "Bu CIF ilə artıq aktiv kredit kartı mövcuddur."
@@ -133,7 +133,7 @@ public class CardServiceImpl implements CardService {
                 sb.append(secureRandom.nextInt(10));
             }
             cardNumber = sb.toString();
-        } while (userRepository.existsByCardNumber(cardNumber));
+        } while (cardRepository.existsByCardNumber(cardNumber));
         return cardNumber;
     }
 
