@@ -1,0 +1,93 @@
+databaseChangeLog:
+  - logicalFilePath: 001-create-user-cards-table.yaml
+
+  - changeSet:
+      id: 01
+      author: Kochari
+      changes:
+        - sql:
+            sql: CREATE SCHEMA IF NOT EXISTS bootbank_card_db
+        - createSequence:
+            schemaName: bootbank_card_db
+            sequenceName: CARD_SEQ
+            startValue: 1
+            incrementBy: 1
+
+  - changeSet:
+      id: 02
+      author: Kochari
+      changes:
+        - createTable:
+            tableName: USER_CARDS
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cif
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_product_code
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_user_cards_card_number
+              - column:
+                  name: expiry_date
+                  type: VARCHAR(5)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_type
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: salary
+                  type: DECIMAL(15, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: DECIMAL(15, 2)
+              - column:
+                  name: credit_limit
+                  type: DECIMAL(15, 2)
+              - column:
+                  name: used_limit
+                  type: DECIMAL(15, 2)
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP

@@ -1,0 +1,139 @@
+databaseChangeLog:
+  - logicalFilePath: 002-create-card-products-table.yaml
+
+  - changeSet:
+      id: 01
+      author: Kochari
+      changes:
+        - createSequence:
+            schemaName: bootbank_card_db
+            sequenceName: card_products_seq
+            startValue: 1
+            incrementBy: 1
+
+  - changeSet:
+      id: 02
+      author: Kochari
+      changes:
+        - createTable:
+            tableName: card_products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: code
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_card_products_code
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_type
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 03
+      author: Kochari
+      changes:
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: DIGICARD }
+              - column: { name: name, value: Bootbank DigiCard }
+              - column: { name: card_type, value: DEBIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: CLASSIC_DEBIT }
+              - column: { name: name, value: Bootbank Classic Debet }
+              - column: { name: card_type, value: DEBIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: PLATINUM_DEBIT }
+              - column: { name: name, value: Bootbank Platinum Debet }
+              - column: { name: card_type, value: DEBIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: VISA_INFINITE }
+              - column: { name: name, value: Bootbank Visa Infinite }
+              - column: { name: card_type, value: DEBIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: WORLD_ELITE }
+              - column: { name: name, value: Bootbank World Elite }
+              - column: { name: card_type, value: DEBIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: CLASSIC_CREDIT }
+              - column: { name: name, value: Bootbank Classic }
+              - column: { name: card_type, value: CREDIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: GOLD_CREDIT }
+              - column: { name: name, value: Bootbank Gold }
+              - column: { name: card_type, value: CREDIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: PREMIUM_CREDIT }
+              - column: { name: name, value: Bootbank Premium }
+              - column: { name: card_type, value: CREDIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
+        - insert:
+            tableName: card_products
+            columns:
+              - column: { name: id, valueSequenceNext: card_products_seq }
+              - column: { name: code, value: PLATINUM_CREDIT }
+              - column: { name: name, value: Bootbank Platinum }
+              - column: { name: card_type, value: CREDIT }
+              - column: { name: created_date, valueDate: now() }
+              - column: { name: updated_date, valueDate: now() }
