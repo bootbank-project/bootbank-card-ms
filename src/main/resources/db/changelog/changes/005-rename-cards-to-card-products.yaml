@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 005-rename-cards-to-card-products
-      author: bootbank
-      comment: "Renames cards to card_products to match the CardProduct entity mapping"
-      changes:
-        - renameTable:
-            oldTableName: cards
-            newTableName: card_products

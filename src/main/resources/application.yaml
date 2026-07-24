@@ -4,8 +4,10 @@ spring:
   profiles:
     include:
       - db
+      - management
 server:
   servlet:
     context-path: /bootbank-card-ms
+  port: 8084
 
 

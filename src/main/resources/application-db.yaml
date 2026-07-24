@@ -1,19 +1,27 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bootbank_card_db?currentSchema=bootbank_card_db
+    username: bootbank_card
+    password: dev12345
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1800000
   jpa:
-    database: POSTGRESQL
-    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
     hibernate:
       ddl-auto: validate
+    show-sql: true
     properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/postgres
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-
+      default_schema: bootbank_card_db
 
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    change-log: db/changelog/db.changelog-master.yaml
+    default-schema: bootbank_card_db
+    drop-first: false
