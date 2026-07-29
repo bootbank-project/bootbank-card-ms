@@ -1,7 +1,9 @@
 package com.bootbank.card.service.Impl;
 
 import com.bootbank.card.dto.request.CardOrderRequest;
+import com.bootbank.card.dto.request.CardStatusUpdateRequest;
 import com.bootbank.card.dto.response.CardOrderResponse;
+import com.bootbank.card.dto.response.CardStatusResponse;
 import com.bootbank.card.exception.RecordNotFoundException;
 import com.bootbank.card.exception.enums.ErrorCode;
 import com.bootbank.card.model.entity.UserCard;
@@ -21,6 +23,8 @@ import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
@@ -100,6 +104,49 @@ public class CardServiceImpl implements CardService {
                 creditLimit,
                 usedLimit
         );
+    }
+
+    @Override
+    @Transactional
+    public CardStatusResponse updateCardStatus(String clientCif, String cardNumber, CardStatusUpdateRequest request) {
+        // 1. Kartın DB-dən tapılması
+        UserCard card = cardRepository.findByCardNumber(cardNumber)
+                .orElseThrow(() -> new RecordNotFoundException(
+                        ErrorCode.CARD_NOT_FOUND,
+                        "Kart tapılmadı: " + cardNumber
+                ));
+
+        // 2. Ownership Check (CIF yoxlanışı)
+        if (!clientCif.equals(card.getClientCif())) {
+            throw new RecordNotFoundException(
+                    ErrorCode.FORBIDDEN,
+                    "Bu kart üzrə əməliyyat aparmaq icazəniz yoxdur."
+            );
+        }
+
+        // 3. Eyni status yoxlanışı (Lazımsız DB update-in qarşısını almaq üçün)
+        if (card.getStatus() == request.getStatus()) {
+            return mapToCardStatusResponse(card);
+        }
+
+        // 4. Statusun yenilənməsi
+        card.setStatus(request.getStatus());
+        card.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
+        UserCard updatedCard = cardRepository.save(card);
+
+        return mapToCardStatusResponse(updatedCard);
+    }
+
+    private CardStatusResponse mapToCardStatusResponse(UserCard card) {
+        LocalDateTime updatedAt = card.getUpdatedDate() != null
+                ? card.getUpdatedDate().toLocalDateTime()
+                : LocalDateTime.now();
+
+        return CardStatusResponse.builder()
+                .cardNumber(maskCardNumber(card.getCardNumber()))
+                .status(card.getStatus())
+                .updatedAt(updatedAt)
+                .build();
     }
 
     private void validateCreditCardRules(String clientCif, CardOrderRequest request) {

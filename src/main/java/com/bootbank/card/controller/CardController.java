@@ -1,7 +1,9 @@
 package com.bootbank.card.controller;
 
 import com.bootbank.card.dto.request.CardOrderRequest;
+import com.bootbank.card.dto.request.CardStatusUpdateRequest;
 import com.bootbank.card.dto.response.CardOrderResponse;
+import com.bootbank.card.dto.response.CardStatusResponse;
 import com.bootbank.card.service.CardService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -38,5 +40,20 @@ public class CardController {
             @Valid @RequestBody CardOrderRequest request
     ) {
         return cardService.orderCard(cif, name, surname, request);
+    }
+
+    @PatchMapping("/{cardNumber}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public CardStatusResponse updateCardStatus(
+            @RequestHeader("cif")
+            @NotBlank(message = "X-Client-Cif header is required")
+            @Pattern(regexp = "^C\\d{6}$", message = "Invalid CIF format")
+            String cif,
+
+            @PathVariable String cardNumber,
+
+            @Valid @RequestBody CardStatusUpdateRequest request
+    ) {
+        return cardService.updateCardStatus(cif, cardNumber, request);
     }
 }

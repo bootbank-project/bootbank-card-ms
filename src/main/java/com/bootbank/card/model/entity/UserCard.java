@@ -1,5 +1,6 @@
 package com.bootbank.card.model.entity;
 
+import com.bootbank.card.model.enums.CardStatus;
 import com.bootbank.card.model.enums.CardType;
 import com.bootbank.card.model.enums.Currency;
 import jakarta.persistence.*;
@@ -59,6 +60,10 @@ public class UserCard {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 3)
     Currency currency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    CardStatus status;
 
     @NotNull(message = "Salary cannot be null")
     @DecimalMin(value = "0.0", message = "Salary cannot be negative")

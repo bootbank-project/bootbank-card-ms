@@ -17,6 +17,8 @@ public enum ErrorCode {
     USER_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
     CARD_PRODUCT_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
 
+    FORBIDDEN("Forbidden", HttpStatus.FORBIDDEN),
+
     RESOURCE_ALREADY_EXISTS("Conflict", HttpStatus.CONFLICT),
 
     INTERNAL_ERROR("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
