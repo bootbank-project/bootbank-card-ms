@@ -39,4 +39,12 @@ public class CardController {
     ) {
         return cardService.orderCard(cif, name, surname, request);
     }
+
+    @GetMapping("/transactions/{id}")
+    public com.bootbank.card.dto.response.TransactionResponse getTransactionDetails(
+            @PathVariable("id") Long id,
+            @RequestHeader("X-Client-CIF") String clientCif
+    ) {
+        return cardService.getTransactionDetails(id, clientCif);
+    }
 }
