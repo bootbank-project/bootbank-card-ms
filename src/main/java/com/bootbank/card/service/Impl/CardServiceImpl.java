@@ -34,6 +34,7 @@ public class CardServiceImpl implements CardService {
 
     private final CardProductRepository cardProductRepository;
     private final CardRepository cardRepository;
+    private final com.bootbank.card.repository.CardTransactionRepository cardTransactionRepository;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Override
@@ -192,5 +193,30 @@ public class CardServiceImpl implements CardService {
         LocalDate expiryLocalDate = LocalDate.now().plusYears(3);
         String year = String.valueOf(expiryLocalDate.getYear()).substring(2);
         return String.format("%02d/%s", expiryLocalDate.getMonthValue(), year);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public com.bootbank.card.dto.response.TransactionResponse getTransactionDetails(Long id, String clientCif) {
+        if (clientCif == null || clientCif.trim().isEmpty()) {
+            throw new RecordNotFoundException(ErrorCode.INVALID_INPUT, "X-Client-CIF header is required");
+        }
+
+        com.bootbank.card.model.entity.CardTransaction transaction = cardTransactionRepository.findByIdWithCard(id)
+                .orElseThrow(() -> new RecordNotFoundException(ErrorCode.TRANSACTION_NOT_FOUND, "Transaction not found with ID: " + id));
+
+        if (!transaction.getCard().getClientCif().equals(clientCif)) {
+            throw new RecordNotFoundException(ErrorCode.FORBIDDEN, "You do not have access to view this transaction");
+        }
+
+        return com.bootbank.card.dto.response.TransactionResponse.builder()
+                .id(transaction.getId())
+                .cardNumber(maskCardNumber(transaction.getCard().getCardNumber()))
+                .title(transaction.getTitle())
+                .category(transaction.getCategory())
+                .amount(transaction.getAmount())
+                .status(transaction.getStatus())
+                .createdAt(transaction.getCreatedAt())
+                .build();
     }
 }

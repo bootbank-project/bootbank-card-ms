@@ -42,18 +42,11 @@ public class CardController {
         return cardService.orderCard(cif, name, surname, request);
     }
 
-    @PatchMapping("/{cardNumber}/status")
-    @ResponseStatus(HttpStatus.OK)
-    public CardStatusResponse updateCardStatus(
-            @RequestHeader("cif")
-            @NotBlank(message = "X-Client-Cif header is required")
-            @Pattern(regexp = "^C\\d{6}$", message = "Invalid CIF format")
-            String cif,
-
-            @PathVariable String cardNumber,
-
-            @Valid @RequestBody CardStatusUpdateRequest request
+    @GetMapping("/transactions/{id}")
+    public com.bootbank.card.dto.response.TransactionResponse getTransactionDetails(
+            @PathVariable("id") Long id,
+            @RequestHeader("X-Client-CIF") String clientCif
     ) {
-        return cardService.updateCardStatus(cif, cardNumber, request);
+        return cardService.getTransactionDetails(id, clientCif);
     }
 }

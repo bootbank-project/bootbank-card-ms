@@ -16,6 +16,9 @@ public enum ErrorCode {
     CARD_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
     CARD_PRODUCT_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
+    TRANSACTION_NOT_FOUND("Not Found", HttpStatus.NOT_FOUND),
+
+    FORBIDDEN("Forbidden", HttpStatus.FORBIDDEN),
 
     FORBIDDEN("Forbidden", HttpStatus.FORBIDDEN),
 
