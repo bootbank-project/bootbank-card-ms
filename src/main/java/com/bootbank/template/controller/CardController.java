@@ -2,6 +2,7 @@ package com.bootbank.template.controller;
 
 import com.bootbank.template.dto.request.CardOrderRequest;
 import com.bootbank.template.dto.response.CardOrderResponse;
+import com.bootbank.template.dto.response.CardProductsResponse;
 import com.bootbank.template.service.CardService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/cards")
@@ -38,5 +41,11 @@ public class CardController {
             @Valid @RequestBody CardOrderRequest request
     ) {
         return cardService.orderCard(clientCif, clientName, clientLastname, request);
+    }
+
+    @GetMapping("/products")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CardProductsResponse> getAllCardProducts() {
+        return cardService.getAllCardProducts();
     }
 }

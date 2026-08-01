@@ -30,6 +30,10 @@ public class CardProduct {
     @Column(nullable = false, unique = true)
     String code;
 
+    @NotBlank(message = "Card name cannot be null or blank")
+    @Column(nullable = false)
+    String name;
+
     @NotNull(message = "Card type is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)

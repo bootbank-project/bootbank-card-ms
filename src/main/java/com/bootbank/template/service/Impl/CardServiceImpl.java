@@ -2,6 +2,7 @@ package com.bootbank.template.service.Impl;
 
 import com.bootbank.template.dto.request.CardOrderRequest;
 import com.bootbank.template.dto.response.CardOrderResponse;
+import com.bootbank.template.dto.response.CardProductsResponse;
 import com.bootbank.template.exception.RecordNotFoundException;
 import com.bootbank.template.exception.enums.ErrorCode;
 import com.bootbank.template.model.entity.Card;
@@ -21,6 +22,8 @@ import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
@@ -100,6 +103,17 @@ public class CardServiceImpl implements CardService {
                 creditLimit,
                 usedLimit
         );
+    }
+
+    @Override
+    public List<CardProductsResponse> getAllCardProducts() {
+        return cardProductRepository.findAll().stream()
+                .map(cardProduct -> new CardProductsResponse(
+                        CardProductCode.valueOf(cardProduct.getCode()),
+                        cardProduct.getName(),
+                        cardProduct.getType().name()
+                ))
+                .toList();
     }
 
     private void validateCreditCardRules(String clientCif, CardOrderRequest request) {
