@@ -47,4 +47,14 @@ public class CardController {
     ) {
         return cardService.getTransactionDetails(id, clientCif);
     }
+
+    @GetMapping
+    public java.util.List<com.bootbank.card.dto.response.CardResponse> getCardsByCif(
+            @RequestHeader("cif")
+            @NotBlank(message = "X-Client-Cif header is required")
+            @Pattern(regexp = "^C\\d{6}$", message = "Invalid CIF format")
+            String cif
+    ) {
+        return cardService.getCardsByCif(cif);
+    }
 }

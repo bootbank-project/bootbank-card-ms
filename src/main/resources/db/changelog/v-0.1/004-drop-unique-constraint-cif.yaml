@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-drop-unique-cif
+      author: Antigravity
+      changes:
+        - dropUniqueConstraint:
+            schemaName: bootbank_card_db
+            tableName: USER_CARDS
+            constraintName: user_cards_cif_key

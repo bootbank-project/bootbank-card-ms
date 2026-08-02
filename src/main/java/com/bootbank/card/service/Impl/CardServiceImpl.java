@@ -172,4 +172,28 @@ public class CardServiceImpl implements CardService {
                 .createdAt(transaction.getCreatedAt())
                 .build();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<com.bootbank.card.dto.response.CardResponse> getCardsByCif(String clientCif) {
+        if (clientCif == null || clientCif.trim().isEmpty()) {
+            throw new RecordNotFoundException(ErrorCode.INVALID_INPUT, "X-Client-CIF header is required");
+        }
+        return cardRepository.findByClientCif(clientCif).stream()
+                .map(card -> new com.bootbank.card.dto.response.CardResponse(
+                        card.getId(),
+                        card.getCardProductCode().getCode(),
+                        maskCardNumber(card.getCardNumber()),
+                        card.getExpiryDate(),
+                        card.getCardType().name(),
+                        card.getCurrency().name(),
+                        card.getBalance(),
+                        card.getCreditLimit(),
+                        card.getUsedLimit(),
+                        "active",
+                        true,
+                        true
+                ))
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

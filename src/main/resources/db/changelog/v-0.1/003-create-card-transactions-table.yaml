@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - logicalFilePath: 003-create-card-transactions-table.yaml
+
+  - changeSet:
+      id: 01
+      author: Kochari
+      changes:
+        - createTable:
+            schemaName: bootbank_card_db
+            tableName: card_transactions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_card_transactions_card_id
+                    referencedTableSchemaName: bootbank_card_db
+                    referencedTableName: USER_CARDS
+                    referencedColumnNames: id
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(15, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
