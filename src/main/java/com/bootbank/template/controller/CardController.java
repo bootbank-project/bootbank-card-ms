@@ -3,6 +3,7 @@ package com.bootbank.template.controller;
 import com.bootbank.template.dto.request.CardOrderRequest;
 import com.bootbank.template.dto.response.CardOrderResponse;
 import com.bootbank.template.dto.response.CardProductsResponse;
+import com.bootbank.template.dto.response.TransactionsListResponse;
 import com.bootbank.template.service.CardService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -47,5 +48,16 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     public List<CardProductsResponse> getAllCardProducts() {
         return cardService.getAllCardProducts();
+    }
+
+    @GetMapping("/transactions")
+    @ResponseStatus(HttpStatus.OK)
+    public TransactionsListResponse getTransactions(
+            @RequestHeader("X-Client-Cif")
+            @NotBlank(message = "X-Client-Cif header is required")
+            @Size(min = 6, max = 6, message = "X-Client-Cif must be exactly 6 characters")
+            String clientCif
+    ) {
+        return cardService.getTransactions(clientCif);
     }
 }

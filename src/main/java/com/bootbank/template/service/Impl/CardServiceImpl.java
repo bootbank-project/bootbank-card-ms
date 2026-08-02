@@ -3,15 +3,19 @@ package com.bootbank.template.service.Impl;
 import com.bootbank.template.dto.request.CardOrderRequest;
 import com.bootbank.template.dto.response.CardOrderResponse;
 import com.bootbank.template.dto.response.CardProductsResponse;
+import com.bootbank.template.dto.response.TransactionResponse;
+import com.bootbank.template.dto.response.TransactionsListResponse;
 import com.bootbank.template.exception.RecordNotFoundException;
 import com.bootbank.template.exception.enums.ErrorCode;
 import com.bootbank.template.model.entity.Card;
 import com.bootbank.template.model.entity.CardProduct;
+import com.bootbank.template.model.entity.Transaction;
 import com.bootbank.template.model.enums.CardProductCode;
 import com.bootbank.template.model.enums.CardType;
 import com.bootbank.template.model.enums.Currency;
 import com.bootbank.template.repository.CardRepository;
 import com.bootbank.template.repository.CardProductRepository;
+import com.bootbank.template.repository.TransactionRepository;
 import com.bootbank.template.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,7 @@ public class CardServiceImpl implements CardService {
 
     private final CardProductRepository cardProductRepository;
     private final CardRepository cardRepository;
+    private final TransactionRepository transactionRepository;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Override
@@ -114,6 +119,25 @@ public class CardServiceImpl implements CardService {
                         cardProduct.getType().name()
                 ))
                 .toList();
+    }
+
+    @Override
+    public TransactionsListResponse getTransactions(String clientCif) {
+        List<TransactionResponse> items = transactionRepository
+                .findByCard_ClientCifOrderByCreatedAtDesc(clientCif)
+                .stream()
+                .map(transaction -> new TransactionResponse(
+                        transaction.getId(),
+                        maskCardNumber(transaction.getCard().getCardNumber()),
+                        transaction.getTitle(),
+                        transaction.getCategory(),
+                        transaction.getAmount(),
+                        transaction.getStatus().name(),
+                        transaction.getCreatedAt()
+                ))
+                .toList();
+
+        return new TransactionsListResponse(items, items.size());
     }
 
     private void validateCreditCardRules(String clientCif, CardOrderRequest request) {
